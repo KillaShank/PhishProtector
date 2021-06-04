@@ -25,7 +25,7 @@ st.sidebar.write('OR')
 
 st.sidebar.subheader('Manually input features for prediction')
 ssl_cert = st.sidebar.slider('SSL Certificate', -1, 1, 0, step = 1)
-dom_reg_len = st.sidebar.slider('Domin Registeration Length', 0, 1, 0, step = 1)
+dom_reg_len = st.sidebar.slider('Domain Registeration Length', 0, 1, 0, step = 1)
 url_anchor = st.sidebar.slider('URL of Anchor', -1, 1, 0, step = 1)
 pref_suff = st.sidebar.slider('Prefix Suffix', -1, 1, 0, step = 1)
 web_traf = st.sidebar.slider('Web Traffic', -1, 1, 0, step = 1)
