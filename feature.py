@@ -1,3 +1,4 @@
+import subprocess
 import regex
 import tldextract    
 from tldextract import extract
@@ -15,7 +16,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import pandas as pd
-
+from threading import Thread
 
 # ok
 def url_having_ip(url):
@@ -426,38 +427,112 @@ def check_google_index(url):
 def check_links_to_page(url):
     return 0
 
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs)
+        self._return = None
+    def run(self):
+        print(type(self._target))
+        if self._target is not None:
+            self._return = self._target(*self._args, **self._kwargs)
+    def join(self, *args):
+        Thread.join(self, *args)
+        return self._return
+
 def get_all_features(url):
+    having_IP_Address_th = ThreadWithReturnValue(target=url_having_ip, args=(url,))         
+    URL_Length_th = ThreadWithReturnValue(target=url_length, args=(url,))
+    Shortining_Service_th = ThreadWithReturnValue(target=check_for_shortened_url, args=(url,))
+    having_At_Symbol_th = ThreadWithReturnValue(target=having_at_symbol, args=(url,))         
+    double_slash_redirecting_th = ThreadWithReturnValue(target=doubleSlash, args=(url,))
+    Prefix_Suffix_th = ThreadWithReturnValue(target=prefix_Suffix, args=(url,))              
+    having_Sub_Domain_th = ThreadWithReturnValue(target=sub_Dom, args=(url,))         
+    SSLfinal_State_th = ThreadWithReturnValue(target=SSLfinal_State, args=(url,))             
+    Domain_registeration_length_th = ThreadWithReturnValue(target=Dom_registration, args=(url,))
+    Favicon_th = ThreadWithReturnValue(target=has_favicon, args=(url,))                    
+    port_th =  ThreadWithReturnValue(target=get_port, args=(url,))                      
+    HTTPS_token_th =  ThreadWithReturnValue(target=https_token, args=(url,))               
+    Request_URL_th = ThreadWithReturnValue(target=request_url, args=(url,))             
+    URL_of_Anchor_th = ThreadWithReturnValue(target=check_URL_of_anchor, args=(url,))            
+    Links_in_tags_th = ThreadWithReturnValue(target=link_in_tag, args=(url,))              
+    SFH_th = ThreadWithReturnValue(target=sfh, args=(url,))                        
+    Submitting_to_email_th = ThreadWithReturnValue(target=email_submit, args=(url,))       
+    Abnormal_URL_th = ThreadWithReturnValue(target=abnormal_url, args=(url,))               
+    Redirect_th = ThreadWithReturnValue(target=check_redirect, args=(url,))                  
+    on_mouseover_th = ThreadWithReturnValue(target=on_mouseover, args=(url,))               
+    RightClick_th = ThreadWithReturnValue(target=on_RightClick, args=(url,))                  
+    popUpWidnow_th = ThreadWithReturnValue(target=popUpWidnow, args=(url,))                
+    Iframe_th = ThreadWithReturnValue(target=check_iframe, args=(url,))                     
+    age_of_domain_th = ThreadWithReturnValue(target=get_age_of_domain, args=(url,))
+    DNSRecord_th = ThreadWithReturnValue(target=check_dns_record, args=(url,))                  
+    web_traffic_th = ThreadWithReturnValue(target=check_web_traffic, args=(url,))                 
+    Page_Rank_th = ThreadWithReturnValue(target=get_pagerank, args=(url,))                 
+    Google_Index_th = ThreadWithReturnValue(target=check_web_traffic, args=(url,))              
+    Links_pointing_to_page_th = ThreadWithReturnValue(target=check_links_to_page, args=(url,))     
+    Statistical_report_th = ThreadWithReturnValue(target=stat_report, args=(url,))
+
+    having_IP_Address_th.start()         
+    URL_Length_th.start()
+    Shortining_Service_th.start()
+    having_At_Symbol_th.start()        
+    double_slash_redirecting_th.start()
+    Prefix_Suffix_th.start()              
+    having_Sub_Domain_th.start()        
+    SSLfinal_State_th.start()            
+    Domain_registeration_length_th.start()
+    Favicon_th.start()                    
+    port_th.start()                      
+    HTTPS_token_th.start()               
+    Request_URL_th.start()            
+    URL_of_Anchor_th.start()           
+    Links_in_tags_th.start()              
+    SFH_th.start()                      
+    Submitting_to_email_th.start()      
+    Abnormal_URL_th.start()               
+    Redirect_th.start()                 
+    on_mouseover_th.start()              
+    RightClick_th.start()                
+    popUpWidnow_th.start()              
+    Iframe_th.start()                    
+    age_of_domain_th.start()
+    DNSRecord_th.start()               
+    web_traffic_th.start()              
+    Page_Rank_th.start()                
+    Google_Index_th.start()              
+    Links_pointing_to_page_th.start()     
+    Statistical_report_th.start()
+
     data = {
-            'having_IP_Address' : url_having_ip(url),         
-            'URL_Length' : url_length(url),                 
-            'Shortining_Service' : check_for_shortened_url(url),        
-            'having_At_Symbol' : having_at_symbol(url),         
-            'double_slash_redirecting' : doubleSlash(url),
-            'Prefix_Suffix' : prefix_Suffix(url),              
-            'having_Sub_Domain' : sub_Dom(url),         
-            'SSLfinal_State' : SSLfinal_State(url),             
-            'Domain_registeration_length' : Dom_registration(url),
-            'Favicon' : has_favicon(url),                    
-            'port' :  get_port(url),                      
-            'HTTPS_token' :  https_token(url),               
-            'Request_URL' : request_url(url),             
-            'URL_of_Anchor' : check_URL_of_anchor(url),            
-            'Links_in_tags' : link_in_tag(url),              
-            'SFH' : sfh(url),                        
-            'Submitting_to_email' : email_submit(url),       
-            'Abnormal_URL' : abnormal_url(url),               
-            'Redirect' : check_redirect(url),                  
-            'on_mouseover' : on_mouseover(url),               
-            'RightClick' : on_RightClick(url),                  
-            'popUpWidnow' : popUpWidnow(url),                
-            'Iframe' : check_iframe(url),                      
-            'age_of_domain' : get_age_of_domain(url),
-            'DNSRecord' : check_dns_record(url),                  
-            'web_traffic' : check_web_traffic(url),                 
-            'Page_Rank' : get_pagerank(url),                 
-            'Google_Index' : check_web_traffic(url),              
-            'Links_pointing_to_page' : check_links_to_page(url),     
-            'Statistical_report' : stat_report(url),                
+            'having_IP_Address' : having_IP_Address_th.join(),         
+            'URL_Length' : URL_Length_th.join(), 
+            'Shortining_Service' : Shortining_Service_th.join(),                
+            'having_At_Symbol' : having_At_Symbol_th.join(),         
+            'double_slash_redirecting' : double_slash_redirecting_th.join(),
+            'Prefix_Suffix' : Prefix_Suffix_th.join(),              
+            'having_Sub_Domain' : having_Sub_Domain_th.join(),         
+            'SSLfinal_State' : SSLfinal_State_th.join(),             
+            'Domain_registeration_length' : Domain_registeration_length_th.join(),
+            'Favicon' : Favicon_th.join(),                    
+            'port' :  port_th.join(),                      
+            'HTTPS_token' :  HTTPS_token_th.join(),               
+            'Request_URL' : Request_URL_th.join(),             
+            'URL_of_Anchor' : URL_of_Anchor_th.join(),            
+            'Links_in_tags' : Links_in_tags_th.join(),              
+            'SFH' : SFH_th.join(),                        
+            'Submitting_to_email' : Submitting_to_email_th.join(),       
+            'Abnormal_URL' : Abnormal_URL_th.join(),               
+            'Redirect' : Redirect_th.join(),                  
+            'on_mouseover' : on_mouseover_th.join(),               
+            'RightClick' : RightClick_th.join(),                  
+            'popUpWidnow' : popUpWidnow_th.join(),                
+            'Iframe' : Iframe_th.join(),                      
+            'age_of_domain' : age_of_domain_th.join(),
+            'DNSRecord' : DNSRecord_th.join(),                  
+            'web_traffic' : web_traffic_th.join(),                 
+            'Page_Rank' : Page_Rank_th.join(),                 
+            'Google_Index' : Google_Index_th.join(),              
+            'Links_pointing_to_page' : Links_pointing_to_page_th.join(),     
+            'Statistical_report' : Statistical_report_th.join()                
     }
     
     df = pd.DataFrame(data,index = [0])
